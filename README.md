@@ -1,35 +1,54 @@
 # Alax Albert Alves Barbosa
 
-**Desenvolvedor de software · RH, logística e automação de operações**
+**Desenvolvedor de software · Departamento Pessoal, comércio local e logística**
 
-Sou o responsável técnico pelos dois projetos deste portfólio. Conduzo o trabalho de ponta a ponta, da modelagem do domínio e das interfaces à implementação, aos testes, à publicação e à manutenção.
+Desenvolvo e mantenho dois produtos de ponta a ponta. O **BRTX Pro** organiza a rotina do Departamento Pessoal, da pré-admissão ao desligamento. O **BRTX Flash** permite que o comércio local receba pedidos on-line e coordene a entrega, do catálogo à confirmação do recebimento. Sou responsável pela modelagem, pelas interfaces, pela implementação, pelos testes e pela publicação dos dois projetos.
 
-## Linha do tempo dos projetos
+## BRTX Pro · gestão de RH e Departamento Pessoal
 
-| Período em 2026 | Projeto | Marco registrado no GitHub |
+Criei uma aplicação desktop para equipes que precisam acompanhar o histórico dos colaboradores, fechar as rotinas de cada mês e controlar quem pode lançar, aprovar e consultar informações. O produto reúne dossiês, documentos, apontamentos, folha e prazos em fluxos ligados à empresa, à unidade e à competência.
+
+**Como o trabalho passa pelo sistema**
+
+1. O operacional preenche a pré-admissão e reúne os documentos. Com a aprovação e a efetivação, as informações passam a compor o cadastro e o dossiê do colaborador.
+2. Durante o mês, a equipe registra ocorrências e envia lançamentos para revisão. O supervisor pode aprovar ou devolver com motivo. A folha recebe os eventos aplicáveis, e o calendário de competências reúne vencimentos e contas a pagar do DP.
+3. O dossiê reúne a situação do vínculo e dá acesso a rotinas como férias, afastamento, aviso prévio e rescisão, além de documentos como a ficha de registro. Relatórios e exportações seguem as permissões de acesso.
+
+**Decisões de engenharia**
+
+- Separei a pessoa do vínculo jurídico, da categoria do eSocial e da forma de processamento. Na migração, os casos ambíguos seguiram para revisão.
+- Estruturei a rescisão como uma operação transacional. Nos lançamentos mensais, a aprovação repetida não duplica o evento, e a edição simultânea usa controle de versão para evitar sobrescrita.
+- Implementei acesso por empresa e unidade, além de permissões específicas para valores, rubricas e exportações. Incluí uma rotina para restaurar o último backup em um banco separado de homologação.
+
+**Tecnologias** · Python, PyQt6 e PostgreSQL.
+
+## BRTX Flash · pedidos e entregas para o comércio local
+
+Criei uma plataforma para mercados, farmácias, restaurantes e outras lojas locais venderem por site ou aplicativo e conduzirem o pedido até a entrega. O mesmo fluxo conecta cliente, lojista, entregador e administração, com interfaces próprias para o trabalho de cada um.
+
+**Como o pedido passa pelo sistema**
+
+1. O cliente informa o endereço, vê a oferta da região, monta o carrinho e acompanha o pedido. A plataforma contempla conferência de estoque, frete e confirmação do Pix.
+2. O lojista organiza catálogo e estoque, recebe o pedido no balcão e marca as etapas de aceite, preparo e retirada. Para mercados, há venda por peso e importação de catálogo por planilha ou integração com ERP.
+3. O despacho considera proximidade e veículo compatível. O entregador acompanha a rota e confirma a entrega por código. A administração gerencia papéis e aprovações, e a plataforma contempla divisão do pagamento e repasses.
+
+**Decisões de engenharia**
+
+- Corrigi um login intermitente separando a identificação dos serviços de teste e produção e acrescentei uma verificação no CI para evitar a regressão.
+- Tratei a disputa pelo mesmo pedido com aceite transacional e transições condicionadas ao estado esperado. Usei Redis para compartilhar estado e eventos entre réplicas.
+- Ampliei a verificação automatizada com testes de módulos e 12 roteiros de ponta a ponta no CI.
+
+**Tecnologias** · TypeScript, NestJS, PostgreSQL/PostGIS, Redis, React e Flutter.
+
+## Marcos registrados no GitHub
+
+| Data em 2026 | Projeto | Entrega |
 | --- | --- | --- |
-| 4–7 ago. | RH desktop | Registrei a versão anterior à refatoração e separei pessoa, vínculo jurídico, categoria eSocial e forma de processamento. |
-| 9–18 out. | Pedidos e entregas | Registrei a versão 1.0, avancei na preparação operacional e corrigi uma colisão entre serviços de teste e produção. |
-| 26 out. | Ambos | No RH, tratei a consistência da rescisão e dos anexos. Na plataforma de entregas, incluí venda por peso e melhorei o tratamento de endereços e frete. |
-| 3–7 nov. | Ambos | Na plataforma de entregas, tratei concorrência entre réplicas e ampliei o CI. No RH, incluí acesso por unidade e ajustei regras de folha e importação. |
-| 9–12 nov. | RH desktop | Evoluí o dossiê do colaborador, a ficha de registro e a recuperação do banco em homologação. |
+| 4–7 ago. | BRTX Pro | Registro da versão anterior à refatoração e separação do modelo de pessoa e vínculo. |
+| 9–18 out. | BRTX Flash | Registro da versão 1.0, preparação operacional e correção da colisão entre ambientes. |
+| 26–27 out. | Ambos | Rescisão transacional e deduplicação de anexos no Pro. Venda por peso e ajustes de endereço, frete e imagens no Flash. |
+| 3–7 nov. | Ambos | Concorrência entre réplicas e ampliação do CI no Flash. Acesso por unidade e ajustes de folha e importação no Pro. |
+| 9–12 nov. | BRTX Pro | Evolução do dossiê, ficha de registro em PDF e restauração de backup em homologação. |
+| 11 nov. | BRTX Flash | Atualização do build Android e teste do service worker no fluxo de imagens da loja. |
 
-## Sistema de RH desktop · da modelagem do vínculo à homologação
-
-**Python, PyQt6 e PostgreSQL**
-
-- **4–7 de agosto.** A primeira referência do histórico é uma versão anterior à refatoração. Em seguida, separei a pessoa do vínculo jurídico, da categoria do eSocial e da forma de processamento. Na migração de reclassificação, encaminhei os casos ambíguos para revisão em vez de atribuir uma categoria automaticamente.
-- **26 de outubro.** Estruturei a rescisão como uma operação que conclui por inteiro ou falha por inteiro. Na mesma etapa, reorganizei as migrações em um pacote preservando o conteúdo das 70 existentes e passei a identificar anexos repetidos pelo hash SHA-256 do conteúdo.
-- **3–7 de novembro.** Implementei restrição de acesso por unidade dentro da empresa. Ajustei a importação incremental para preservar a data e o motivo de encerramento de vínculos e unifiquei a origem dos dias úteis e do descanso semanal remunerado no calendário da competência.
-- **9–12 de novembro.** Levei ações de férias e rescisão para o contexto do dossiê. Adicionei a ficha de registro em PDF e um teste que lê o documento gerado. Também incluí uma rotina que restaura o último backup em um banco separado de homologação e ajustei a inicialização para evitar repetir alterações de esquema em um banco já migrado.
-
-## Plataforma de pedidos e entregas · do fluxo comercial à concorrência
-
-**TypeScript, NestJS, PostgreSQL/PostGIS, Redis, React e Flutter**
-
-- **9–18 de outubro.** Registrei a versão 1.0. Em seguida, avancei nas rotinas de fila de e-mail, backup externo e ambiente de teste. Corrigi um login intermitente causado por colisão entre serviços de teste e produção, separei seus nomes e acrescentei uma verificação no CI para detectar a regressão.
-- **26–27 de outubro.** Adaptei a plataforma para venda por peso, refinei o endereço usado na entrega e o cálculo de frete e corrigi o carregamento de imagens da loja no fluxo com service worker.
-- **3 de novembro.** Tratei a concorrência no aceite de entregas com uma transação e condicionei transições de estado ao estado esperado. Usei Redis para compartilhar estado e eventos entre réplicas, defini uma instância líder para rotinas periódicas e serializei a execução das migrações. Ampliei a verificação automatizada com testes de módulos e 12 roteiros de ponta a ponta no CI.
-- **11 de novembro.** Atualizei a ferramenta de build do Android e acrescentei um teste de service worker ao revisar o carregamento de imagens no site da loja.
-
-_As datas correspondem aos marcos registrados no histórico do GitHub. Os repositórios dos produtos são privados._
+_Os repositórios dos produtos são privados._
